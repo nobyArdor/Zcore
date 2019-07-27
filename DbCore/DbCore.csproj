@@ -13,13 +13,21 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Composition" Version="16.1.8" />
     <PackageReference Include="Npgsql" Version="4.0.8" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.4" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LibCore\LibCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System">
       <HintPath>System</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Composition">
+      <HintPath>System.ComponentModel.Composition</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations">
       <HintPath>System.ComponentModel.DataAnnotations</HintPath>

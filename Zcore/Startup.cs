@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Zcore.Service;
+using Zcore.Tools;
 
 namespace Zcore
 {
@@ -18,7 +20,9 @@ namespace Zcore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddLogging()
+            services.AddSingleton<IUserManager, ByPassAuthManager>()
+            .AddScoped<ILogicService>()
+            .AddLogging()
             .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

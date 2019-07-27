@@ -12,8 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DbModels\" />
-    <Folder Include="Tools\Crypto\" />
+    <Folder Include="Session\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DbCore\DbCore.csproj" />
+    <ProjectReference Include="..\LibCore\LibCore.csproj" />
   </ItemGroup>
 
 </Project>
