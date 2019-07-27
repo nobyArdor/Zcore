@@ -13,7 +13,7 @@ namespace Zcore
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseKestrel()
-                .UseUrls("http://+:8080")
+                .UseUrls("http://*:80")
                 .UseStartup<Startup>()
         ;
     }

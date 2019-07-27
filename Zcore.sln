@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.757
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zcore", "Zcore\Zcore.csproj", "{B56C2EE0-EEDA-45BA-8110-46FA957818A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbCore", "DbCore\DbCore.csproj", "{0443A7EB-AFDF-412B-A991-0127CD3916E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DbCore", "DbCore\DbCore.csproj", "{0443A7EB-AFDF-412B-A991-0127CD3916E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

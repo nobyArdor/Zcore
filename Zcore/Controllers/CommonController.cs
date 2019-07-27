@@ -45,5 +45,11 @@ namespace Zcore.Controllers
             await _service.Delete(await CheckAuth(authorization), id);
             return Ok();
         }
+
+        public override async Task<IActionResult> Post(string authorization, object value)
+        {
+            var saved = await base.Post(authorization, value);
+            return saved ?? Ok(await _service.Post(await CheckAuth(authorization), value));
+        }
     }
 }
