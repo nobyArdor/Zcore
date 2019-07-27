@@ -33,7 +33,7 @@ namespace Zcore.Controllers
             return !user.State ? new ForbidResult() : null;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public virtual async Task <IActionResult> GetOne([FromHeader] string authorization, [FromQuery] int id)
         {
             var user =  await CheckAuth(authorization);
