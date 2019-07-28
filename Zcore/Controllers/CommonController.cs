@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Zcore.Service;
 using Zcore.Tools;
 
@@ -50,7 +51,10 @@ namespace Zcore.Controllers
             if (saved != null)
                 return saved;
 
-           return Ok(await _logicService.Post(await CheckAuth(authorization), value is T tvalue ? tvalue : value));
+            if ((value is JObject jObject))
+                value = jObject.ToObject(typeof(T));
+
+            return Ok(await _logicService.Post(await CheckAuth(authorization), value is T tvalue ? tvalue : value));
         }
     }
 }
