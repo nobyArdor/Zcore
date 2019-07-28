@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using DbCore;
 using DbCore.Models;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +18,7 @@ namespace Zcore.Service
         protected override Expression<Func<NotifyRecords, bool>> ByAuth(object value)
         {
             if (value is IUserSession session)
-                LambdaExpressionT.CaptureFuncParameter<NotifyRecords>(nameof(NotifyRecords.UserId), session.UserId);
+                return LambdaExpressionT.CaptureFuncParameter<NotifyRecords>(nameof(NotifyRecords.UserId), session.UserId);
 
             return x => false;
         }

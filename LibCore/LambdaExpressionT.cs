@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 namespace Zcore.Tools
 {
@@ -16,8 +14,8 @@ namespace Zcore.Tools
             var constant = Expression.Constant(value);
             var param = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(param, propertyName);
-            var predicate = Expression.Equal(property, constant);
-            var  lambda = Expression.Lambda<Func<T, bool>>(predicate);
+            var predicate = Expression.Equal(property, Expression.Convert( constant, property.Type));
+            var  lambda = Expression.Lambda<Func<T, bool>>(predicate, param);
             return lambda;
         }
 

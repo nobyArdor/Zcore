@@ -29,6 +29,7 @@ namespace Zcore
                 //.AddScoped<DbContext>()
             .AddScoped<ILogicService<NotifyRecords>, NotifyRecordsLogicService>()
             .AddScoped<ILogicService<SensorData>, SensorDataLogicService>()
+
                 .AddDbContext<BDContext>()
             // .AddScoped<>()
             .AddLogging()

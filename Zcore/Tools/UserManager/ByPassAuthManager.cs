@@ -31,7 +31,7 @@ namespace Zcore.Tools
         // TODO передалать на БД.
         private readonly Dictionary<string, int> _byPassDictionary = new Dictionary<string, int>()
         {
-            {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiJQYXJlbnQiLCJpYXQiOjE1MTYyMzkwMjJ9.uOk3GDxGriOcxczL-Q1Z6EW7Tbs2vDXlMUEINSA64gk", 1},
+            {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiJQYXJlbnQiLCJpYXQiOjE1MTYyMzkwMjJ9.uOk3GDxGriOcxczL-Q1Z6EW7Tbs2vDXlMUEINSA64gk", 3},
             {"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiJDaGlsZCIsImlhdCI6MTUxNjIzOTAyMn0.WWS9CvvPLv94pqfbzDjXRrAic6YiTV4bdwGBJcPU7y4", 2 }
         };
         public async Task<IUserSession> CheckAuth(string authToken)

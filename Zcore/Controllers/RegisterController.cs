@@ -27,6 +27,8 @@ namespace Zcore.Controllers
             });
         }
 
+
+        //TODO убрать.
         [HttpPost]
         public IActionResult Post([FromBody] object value)
         {

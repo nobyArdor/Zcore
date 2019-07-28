@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -32,27 +31,32 @@ namespace Zcore.Service
         {
         }
 
+        async Task<long> ILogicService.Post(IUserSession userSession, object value)
+        {
+            var tuData = ConvertValue<SensorMarkedData>(value) ?? ConvertValue<SensorData>(value);
+            if (tuData != null)
+                return await Post(userSession, tuData);
+
+            return 0L;
+        }
+
         public override async Task<long> Post(IUserSession userSession, SensorData value)
         {
-            if (value is SensorMarkedData markedData && markedData.IsNotify)
-            {
-               var notifyList =  await DbContext.UserRelations.Where(x => x.UserSourceId == userSession.UserId).ToListAsync();
+            if (!(value is SensorMarkedData markedData) || !markedData.IsNotify)
+                return await base.Post(userSession, value);
 
-               var notifies = notifyList.Select(x => new NotifyRecords()
-               {
-                   Notification = $"У пользователя {x.Name} критическое понижение давления. Свяжитесь с ней!",
-                   State = int.MaxValue,
-                   UserId = x.UserDestId
-               });
-                DbContext.NotifyRecords.AddRange(notifies);
-                await DbContext.SaveChangesAsync();
-              return await base.Post(userSession, value);
-            }
-            else
+            var notifyList =  await DbContext.UserRelations.Where(x => x.UserSourceId == userSession.UserId).ToListAsync();
+
+            var notifies = notifyList.Select(x => new NotifyRecords()
             {
-               return await base.Post(userSession, value);
-            }
-            
+                Notification = $"У пользователя {x.Name} критическое понижение давления. Свяжитесь с ней!",
+                State = int.MaxValue,
+                UserId = x.UserDestId
+            });
+            DbContext.NotifyRecords.AddRange(notifies);
+            await DbContext.SaveChangesAsync();
+            return await base.Post(userSession, value);
+
         }
     }
 }

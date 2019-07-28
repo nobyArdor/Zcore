@@ -19,6 +19,8 @@ namespace Zcore.Service
 
         }
 
+
+
         protected abstract Expression<Func<T, bool>> ByAuth(object value);
 
         protected Expression<Func<T, bool>> ById(object id)
@@ -79,10 +81,8 @@ namespace Zcore.Service
 
         async Task<long> ILogicService.Post(IUserSession userSession, object value)
         {
-            if ((value is JObject jObject))
-                value = jObject.ToObject(typeof(T));
-
-            if (value is T tData)
+            var tData = ConvertValue<T>(value);
+            if (tData != null)
                 return await Post(userSession, tData);
 
             return 0;
@@ -90,8 +90,20 @@ namespace Zcore.Service
 
         async Task<object> ILogicService.Put(IUserSession userSession, long id, object value)
         {
-            if (value is T tData)
+            var tData = ConvertValue<T>(value);
+            if (tData != null)
                 return await Put(userSession, id, tData);
+
+            return null;
+        }
+
+        protected TU ConvertValue<TU>(object value) where TU : class, new ()
+        {
+            if (value is JObject jObject)
+                value = jObject.ToObject<TU>();
+
+            if (value is TU tData)
+                return tData;
 
             return null;
         }

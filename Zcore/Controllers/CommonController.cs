@@ -7,6 +7,7 @@ using Zcore.Tools;
 
 namespace Zcore.Controllers
 {
+    [Route("api/[controller]")]
     public class CommonController<T> : AuthenticatedController where T: class, new()
     {
         private readonly ILogicService<T> _logicService;
@@ -48,13 +49,7 @@ namespace Zcore.Controllers
         public override async Task<IActionResult> Post(string authorization, object value)
         {
             var saved = await base.Post(authorization, value);
-            if (saved != null)
-                return saved;
-
-            if ((value is JObject jObject))
-                value = jObject.ToObject(typeof(T));
-
-            return Ok(await _logicService.Post(await CheckAuth(authorization), value is T tvalue ? tvalue : value));
+            return saved ?? Ok(await _logicService.Post(await CheckAuth(authorization), value));
         }
     }
 }
