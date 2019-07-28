@@ -4,6 +4,7 @@ using Zcore.NetModels;
 
 namespace Zcore.Controllers
 {
+    //TODO Занимить на обычный OAuth по Jwt
     public class ZmagicController : BaseController
     {
         [HttpGet("parent")]

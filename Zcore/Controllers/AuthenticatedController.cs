@@ -6,9 +6,7 @@ using Zcore.Tools;
 
 namespace Zcore.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public abstract class AuthenticatedController : ControllerBase
+    public abstract class AuthenticatedController : BaseController
     {
         private readonly IUserManager _userManager;
 
@@ -31,14 +29,14 @@ namespace Zcore.Controllers
         }
 
         [HttpGet("{id}")]
-        public virtual async Task <IActionResult> GetOne([FromHeader] string authorization, [FromQuery] int id)
+        public virtual async Task <IActionResult> GetOne([FromHeader] string authorization, [FromQuery] long id)
         {
             var user =  await CheckAuth(authorization);
             return !user.State ? new ForbidResult() : null;
         }
 
         [HttpPut("{id}")]
-        public virtual async Task<IActionResult> Put([FromHeader] string authorization, [FromQuery] int id, [FromBody] object value)
+        public virtual async Task<IActionResult> Put([FromHeader] string authorization, [FromQuery] long id, [FromBody] object value)
         {
             var user = await CheckAuth(authorization);
             return !user.State ? new ForbidResult() : null;
@@ -52,7 +50,7 @@ namespace Zcore.Controllers
         }
 
         [HttpDelete("{id}")]
-        public virtual async Task<IActionResult> Delete([FromHeader] string authorization, [FromQuery] int id)
+        public virtual async Task<IActionResult> Delete([FromHeader] string authorization, [FromQuery] long id)
         {
             var user = await CheckAuth(authorization);
             return !user.State ? new ForbidResult() : null;

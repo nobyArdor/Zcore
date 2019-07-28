@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using DbCore;
+using DbCore.Models;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Zcore.Controllers;
 using Zcore.Service;
 using Zcore.Tools;
 
@@ -20,8 +24,13 @@ namespace Zcore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IUserManager, ByPassAuthManager>()
-            .AddScoped<ILogicService>()
+            services
+                .AddSingleton<IUserManager, ByPassAuthManager>()
+                //.AddScoped<DbContext>()
+            .AddScoped<ILogicService<NotifyRecords>, NotifyRecordsLogicService>()
+            .AddScoped<ILogicService<SensorData>, SensorDataLogicService>()
+                .AddDbContext<BDContext>()
+            // .AddScoped<>()
             .AddLogging()
             .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
