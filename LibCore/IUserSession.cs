@@ -8,6 +8,6 @@ namespace Zcore.Dto.Interfaces
     public interface IUserSession
     {
         bool State { get; }
-        int UserId { get; }
+        long UserId { get; }
     }
 }

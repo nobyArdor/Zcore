@@ -4,10 +4,10 @@ using LibCore;
 
 namespace DbCore.Models
 {
-    public partial class UserRelations : IPrimaryKeyContainer
+    public partial class UserRelations : IPrimaryKeyContainer, IAuthAffected
     {
         public long Id { get; set; }
-        public long UserSourceId { get; set; }
+        public long UserId { get; set; }
         public long UserDestId { get; set; }
         public string Name { get; set; }
 

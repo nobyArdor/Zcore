@@ -19,8 +19,6 @@ namespace Zcore.Tools
             return lambda;
         }
 
-
-
         public static Updater<T> CreateUpdater<T>()
         {
             var typeT = typeof(T);
@@ -36,10 +34,9 @@ namespace Zcore.Tools
             {
                 var dProp = Expression.Property(dest, x);
                 var tProp = Expression.Property(source, x);
-                var equal = Expression.Equal(dProp, tProp);
+                var equal = Expression.NotEqual(dProp, tProp);
                 var assign = Expression.Assign(dProp, tProp);
                 var check = Expression.IfThen(equal, assign);
-
                 return check;
             });
             var block = Expression.Block(new [] {source, dest}, expressions);

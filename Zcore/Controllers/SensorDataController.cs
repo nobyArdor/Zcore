@@ -10,7 +10,6 @@ using Zcore.Tools;
 
 namespace Zcore.Controllers
 {
-    [Route("api/[controller]")]
     public class SensorDataController : CommonController<SensorData>
     {
         public SensorDataController(IUserManager manager, ILogicService<SensorData> logicService) : base(manager, logicService)

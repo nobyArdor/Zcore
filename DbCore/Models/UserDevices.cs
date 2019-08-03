@@ -4,7 +4,7 @@ using LibCore;
 
 namespace DbCore.Models
 {
-    public partial class UserDevices : IPrimaryKeyContainer
+    public partial class UserDevices : IPrimaryKeyContainer, IAuthAffected
     {
         public long Id { get; set; }
         public long UserId { get; set; }

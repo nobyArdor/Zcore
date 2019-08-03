@@ -1,41 +1,86 @@
 ﻿using System;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+using DbCore;
+using DbCore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Zcore.NetModels;
 
 namespace Zcore.Controllers
 {
-    //TODO Занимить на обычный OAuth по Jwt
-    public class ZmagicController : BaseController
+    public class RegisterController : BaseController
     {
-        [HttpGet("parent")]
-        public IActionResult ParentGet()
+        private const string Secret = "Zabota+";
+        private readonly BDContext _bdContext;
+
+        public RegisterController(BDContext bdContext)
         {
-            return Ok(new DumbassLoginModel
-            {
-                AuthToken =
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiJQYXJlbnQiLCJpYXQiOjE1MTYyMzkwMjJ9.uOk3GDxGriOcxczL-Q1Z6EW7Tbs2vDXlMUEINSA64gk"
-            });
+            _bdContext = bdContext;
         }
 
-        [HttpGet("child")]
-        public IActionResult ChildGet()
-        {
-            return Ok(new DumbassLoginModel
-            {
-                AuthToken =
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiMTIzNDU2Nzg5MCIsIm5hbWUiOiJDaGlsZCIsImlhdCI6MTUxNjIzOTAyMn0.WWS9CvvPLv94pqfbzDjXRrAic6YiTV4bdwGBJcPU7y4"
-            });
-        }
-
-
-        //TODO убрать.
         [HttpPost]
-        public IActionResult Post([FromBody] object value)
+        public async Task<IActionResult> Post([FromBody] object obj)
         {
-            var rnd = new Random(DateTime.Now.Millisecond);
-            rnd.Next();
-            rnd.Next();
-            return Ok(rnd.Next());
+            var value = ConvertValue<RegisterChallengModel>(obj);
+
+
+            Console.WriteLine(value.Challenge);
+           var arr =  value.Challenge.Split('.', StringSplitOptions.RemoveEmptyEntries);
+           var base64 = arr[0];
+           var challenge = arr[1];
+           var secret = Convert.FromBase64String(base64);;
+           var preseqence = Encoding.UTF8.GetString(secret);
+           var checkValue = preseqence + $"{DateTime.Today:dd.MM.yyyy}" + Secret;
+           var challengeVerification = string.Empty;
+           using (var sha2 = new SHA256Managed())
+           {
+               var data = Encoding.UTF8.GetBytes(checkValue);
+               var sha = sha2.ComputeHash(data);
+               challengeVerification = BitConverter.ToString(sha).Replace("-", "").ToLowerInvariant();
+           }
+
+           if (!string.Equals(challengeVerification, challenge))
+               return Forbid();
+
+           var bytes = new byte[(152 / 8) * 6];
+           var rand = new Random((int) DateTime.Now.ToFileTime());
+           rand.NextBytes(bytes);
+           var auth = Convert.ToBase64String(bytes);
+
+           var user = new Users()
+           {
+               LastLogin = DateTime.Now,
+               RegSecret = secret
+           };
+
+           _bdContext.Users.Add(user);
+           var session = new Sessions()
+           {
+               Expire = DateTime.Today.AddYears(1),
+               Token = auth,
+               User = user
+           };
+
+           _bdContext.Sessions.Add(session);
+           await _bdContext.SaveChangesAsync();
+           return Ok(new RegisterResponse {Auth = auth});
+        }
+
+        protected TU ConvertValue<TU>(object value) where TU : class, new()
+        {
+            Console.WriteLine(value);
+            if (value is JObject jObject)
+            {
+                Console.WriteLine(jObject.ToString());
+                value = jObject.ToObject<TU>();
+            }
+
+            if (value is TU tData)
+                return tData;
+
+            return null;
         }
     }
 }

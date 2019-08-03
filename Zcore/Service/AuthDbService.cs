@@ -8,6 +8,7 @@ using LibCore;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Zcore.Dto.Interfaces;
+using Zcore.NetModels;
 using Zcore.Tools;
 
 namespace Zcore.Service
@@ -19,7 +20,7 @@ namespace Zcore.Service
 
         }
 
-
+        protected static readonly IPostResponse EmptyPostResponse = new PostBaseModel();
 
         protected abstract Expression<Func<T, bool>> ByAuth(object value);
 
@@ -49,16 +50,22 @@ namespace Zcore.Service
             if (finded == null)
                 return null;
 
+            if (value is IAuthAffected affected)
+                affected.UserId = userSession.UserId;
+
             Updater(value, finded);
             await DbContext.SaveChangesAsync();
             return finded;
         }
 
-        public virtual async Task<long> Post(IUserSession userSession, T value)
+        public virtual async Task<IPostResponse> Post(IUserSession userSession, T value)
         {
+            if (value is IAuthAffected affected)
+                affected.UserId = userSession.UserId;
+
             var res = await Container.AddAsync(value);
             await DbContext.SaveChangesAsync();
-            return res.Entity.Id;
+            return new PostBaseModel() {Id = res.Entity.Id };
         }
 
         public async Task Delete(IUserSession userSession, long id)
@@ -79,13 +86,13 @@ namespace Zcore.Service
             return await GetOne(userSession, id);
         }
 
-        async Task<long> ILogicService.Post(IUserSession userSession, object value)
+        async Task<IPostResponse> ILogicService.Post(IUserSession userSession, object value)
         {
             var tData = ConvertValue<T>(value);
             if (tData != null)
                 return await Post(userSession, tData);
 
-            return 0;
+            return EmptyPostResponse;
         }
 
         async Task<object> ILogicService.Put(IUserSession userSession, long id, object value)

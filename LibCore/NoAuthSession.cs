@@ -9,6 +9,6 @@ namespace Zcore.Dto
     public class NoAuthSession : IUserSession
     {
         public bool State { get; } = false;
-        public int UserId { get; } = Int32.MinValue;
+        public long UserId { get; } = long.MinValue;
     }
 }

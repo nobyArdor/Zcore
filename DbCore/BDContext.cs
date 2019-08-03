@@ -30,7 +30,9 @@ namespace DbCore
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=BD;Username=appuser;Password=RTxrHA90r2M%C0vZW6uh");
+                 optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=care;Username=career;Password=career");
+
+               // optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=BD;Username=appuser;Password=RTxrHA90r2M%C0vZW6uh");
             }
         }
 
@@ -152,6 +154,8 @@ namespace DbCore
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.Date).HasColumnName("date");
+
                 entity.Property(e => e.Type).HasColumnName("type");
 
                 entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -219,7 +223,7 @@ namespace DbCore
 
                 entity.Property(e => e.UserDestId).HasColumnName("user_dest_id");
 
-                entity.Property(e => e.UserSourceId).HasColumnName("user_source_id");
+                entity.Property(e => e.UserId).HasColumnName("user_source_id");
 
                 entity.HasOne(d => d.UserDest)
                     .WithMany(p => p.UserRelationsUserDest)
@@ -228,7 +232,7 @@ namespace DbCore
 
                 entity.HasOne(d => d.UserSource)
                     .WithMany(p => p.UserRelationsUserSource)
-                    .HasForeignKey(d => d.UserSourceId)
+                    .HasForeignKey(d => d.UserId)
                     .HasConstraintName("user_relations_fk");
             });
 

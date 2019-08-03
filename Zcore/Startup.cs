@@ -25,12 +25,13 @@ namespace Zcore
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddSingleton<IUserManager, ByPassAuthManager>()
+              
                 //.AddScoped<DbContext>()
             .AddScoped<ILogicService<NotifyRecords>, NotifyRecordsLogicService>()
             .AddScoped<ILogicService<SensorData>, SensorDataLogicService>()
 
                 .AddDbContext<BDContext>()
+                .AddScoped<IUserManager, CustomAuthManager>()
             // .AddScoped<>()
             .AddLogging()
             .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

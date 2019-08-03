@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
 using Zcore.Dto;
@@ -18,7 +17,10 @@ namespace Zcore.Tools
 
         public async Task<IUserSession> Auth(string authData)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(authData))
+                return new NoAuthSession();
+
+            return await CheckAuth(authData);
         }
 
         public async Task<IUserSession> CheckAuth(object authToken)
@@ -40,6 +42,7 @@ namespace Zcore.Tools
            if (!_byPassDictionary.ContainsKey(authToken))
                return new NoAuthSession();
 
+           
            return new UserSession(true, _byPassDictionary[authToken]);
         }
     }

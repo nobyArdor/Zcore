@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using DbCore;
 using DbCore.Models;
+using LibCore;
 using Microsoft.EntityFrameworkCore;
 using Zcore.Dto.Interfaces;
 using Zcore.NetModels;
@@ -31,21 +32,21 @@ namespace Zcore.Service
         {
         }
 
-        async Task<long> ILogicService.Post(IUserSession userSession, object value)
+        async Task<IPostResponse> ILogicService.Post(IUserSession userSession, object value)
         {
             var tuData = ConvertValue<SensorMarkedData>(value) ?? ConvertValue<SensorData>(value);
             if (tuData != null)
                 return await Post(userSession, tuData);
 
-            return 0L;
+            return EmptyPostResponse;
         }
 
-        public override async Task<long> Post(IUserSession userSession, SensorData value)
+        public override async Task<IPostResponse> Post(IUserSession userSession, SensorData value)
         {
             if (!(value is SensorMarkedData markedData) || !markedData.IsNotify)
                 return await base.Post(userSession, value);
 
-            var notifyList =  await DbContext.UserRelations.Where(x => x.UserSourceId == userSession.UserId).ToListAsync();
+            var notifyList =  await DbContext.UserRelations.Where(x => x.UserId == userSession.UserId).ToListAsync();
 
             var notifies = notifyList.Select(x => new NotifyRecords()
             {
@@ -56,7 +57,6 @@ namespace Zcore.Service
             DbContext.NotifyRecords.AddRange(notifies);
             await DbContext.SaveChangesAsync();
             return await base.Post(userSession, value);
-
         }
     }
 }

@@ -6,7 +6,6 @@ using Zcore.Tools;
 
 namespace Zcore.Controllers
 {
-    [Route("api/[controller]")]
     public abstract class AuthenticatedController : BaseController
     {
         private readonly IUserManager _userManager;

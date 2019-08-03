@@ -7,7 +7,7 @@ using Zcore.Tools;
 
 namespace Zcore.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("zabota/api/[controller]")]
     public class CommonController<T> : AuthenticatedController where T: class, new()
     {
         private readonly ILogicService<T> _logicService;
