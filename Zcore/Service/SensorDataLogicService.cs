@@ -14,7 +14,7 @@ namespace Zcore.Service
 {
     public class SensorDataLogicService : AuthDbService<SensorData>, ILogicService<SensorData>
     {
-        protected override Expression<Func <SensorData, bool>> ByAuth(object value)
+        protected override Expression<Func<SensorData, bool>> ByAuth(object value)
         {
             if (value is IUserSession userSession)
                 return LambdaExpressionT.CaptureFuncParameter<SensorData>(nameof(SensorData.UserId),
@@ -41,22 +41,21 @@ namespace Zcore.Service
             return EmptyPostResponse;
         }
 
+        private async Task<SensorData> AllReadyExist(IUserSession userSession, SensorData value)
+        {
+            value.UserId = userSession.UserId;
+            var result = await Container.FirstOrDefaultAsync(x => x.UserId == value.UserId &&
+                                                                  x.Date == value.Date &&
+                                                                  x.Type == value.Type &&
+                                                                  x.Value == value.Value);
+            return result;
+        }
+
         public override async Task<IPostResponse> Post(IUserSession userSession, SensorData value)
         {
-            if (!(value is SensorMarkedData markedData) || !markedData.IsNotify)
-                return await base.Post(userSession, value);
-
-            var notifyList =  await DbContext.UserRelations.Where(x => x.UserId == userSession.UserId).ToListAsync();
-
-            var notifies = notifyList.Select(x => new NotifyRecords()
-            {
-                Notification = $"У пользователя {x.Name} критическое понижение давления. Свяжитесь с ней!",
-                State = int.MaxValue,
-                UserId = x.UserDestId
-            });
-            DbContext.NotifyRecords.AddRange(notifies);
-            await DbContext.SaveChangesAsync();
-            return await base.Post(userSession, value);
+            var existed = await AllReadyExist(userSession, value);
+            var result = existed != null ? new PostBaseModel {Id = existed.Id} : null;
+            return result ?? await base.Post(userSession, value);
         }
     }
 }

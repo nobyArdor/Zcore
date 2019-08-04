@@ -26,7 +26,7 @@ namespace Zcore.Controllers
             var value = ConvertValue<RegisterChallengModel>(obj);
 
 
-            Console.WriteLine(value.Challenge);
+           // Console.WriteLine(value.Challenge);
            var arr =  value.Challenge.Split('.', StringSplitOptions.RemoveEmptyEntries);
            var base64 = arr[0];
            var challenge = arr[1];
@@ -70,10 +70,10 @@ namespace Zcore.Controllers
 
         protected TU ConvertValue<TU>(object value) where TU : class, new()
         {
-            Console.WriteLine(value);
+            //Console.WriteLine(value);
             if (value is JObject jObject)
             {
-                Console.WriteLine(jObject.ToString());
+                //Console.WriteLine(jObject.ToString());
                 value = jObject.ToObject<TU>();
             }
 
