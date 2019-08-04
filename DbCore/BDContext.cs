@@ -1,18 +1,25 @@
 ﻿using DbCore.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace DbCore
 {
     public partial class BDContext : DbContext
     {
-        public BDContext()
+        public IConfiguration Configuration { get; }
+
+        public BDContext(IConfiguration configuration)
         {
+            Configuration = configuration;
         }
 
-        public BDContext(DbContextOptions<BDContext> options)
+        public BDContext(IConfiguration configuration, DbContextOptions<BDContext> options)
             : base(options)
         {
+            Configuration = configuration;
         }
+
+        public DbContextOptions<BDContext> Options { get;  }
 
         public virtual DbSet<DeviceInfo> DeviceInfo { get; set; }
         public virtual DbSet<Devices> Devices { get; set; }
@@ -27,13 +34,11 @@ namespace DbCore
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                 optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=care;Username=career;Password=career");
+            if (optionsBuilder.IsConfigured)
+                return;
 
-               // optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=BD;Username=appuser;Password=RTxrHA90r2M%C0vZW6uh");
-            }
+            var connectionString = Configuration.GetConnectionString("Db");
+            optionsBuilder.UseNpgsql(connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

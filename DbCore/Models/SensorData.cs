@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using LibCore;
 
 namespace DbCore.Models
 {
-    public partial class SensorData : IPrimaryKeyContainer, IAuthAffected
+    public partial class SensorData : IPrimaryKeyContainer, IAuthAffectedModel
     {
         public long Id { get; set; }
         public long UserId { get; set; }

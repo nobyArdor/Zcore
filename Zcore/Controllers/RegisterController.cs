@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DbCore;
 using DbCore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using Zcore.NetModels;
 
@@ -23,10 +24,7 @@ namespace Zcore.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] object obj)
         {
-            var value = ConvertValue<RegisterChallengModel>(obj);
-
-
-           // Console.WriteLine(value.Challenge);
+           var value = ConvertValue<RegisterChallengModel>(obj);
            var arr =  value.Challenge.Split('.', StringSplitOptions.RemoveEmptyEntries);
            var base64 = arr[0];
            var challenge = arr[1];
@@ -48,14 +46,16 @@ namespace Zcore.Controllers
            var rand = new Random((int) DateTime.Now.ToFileTime());
            rand.NextBytes(bytes);
            var auth = Convert.ToBase64String(bytes);
-
-           var user = new Users()
+           var user = await _bdContext.Users.FirstOrDefaultAsync(x => x.RegSecret == secret) ??
+                new Users
            {
-               LastLogin = DateTime.Now,
                RegSecret = secret
            };
 
-           _bdContext.Users.Add(user);
+           user.LastLogin = DateTime.Now;
+
+           if (user.Id == 0)
+               _bdContext.Users.Add(user);
            var session = new Sessions()
            {
                Expire = DateTime.Today.AddYears(1),
@@ -70,10 +70,9 @@ namespace Zcore.Controllers
 
         protected TU ConvertValue<TU>(object value) where TU : class, new()
         {
-            //Console.WriteLine(value);
+
             if (value is JObject jObject)
             {
-                //Console.WriteLine(jObject.ToString());
                 value = jObject.ToObject<TU>();
             }
 

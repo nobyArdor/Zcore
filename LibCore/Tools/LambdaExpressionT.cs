@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using LibCore;
 
 namespace Zcore.Tools
 {
@@ -18,6 +19,8 @@ namespace Zcore.Tools
             var  lambda = Expression.Lambda<Func<T, bool>>(predicate, param);
             return lambda;
         }
+
+
 
         public static Updater<T> CreateUpdater<T>()
         {
@@ -42,6 +45,37 @@ namespace Zcore.Tools
             var block = Expression.Block(new [] {source, dest}, expressions);
             var lambda = Expression.Lambda<Updater<T>>(block, source, dest);
             return lambda.Compile();
+        }
+
+        public static Expression<Func<T, bool>> CreateSameObjectChecker<T>(T value)
+        {
+            var typeT = typeof(T);
+
+            var constant = Expression.Constant(value);
+            var param = Expression.Parameter(typeT, "x");
+
+            var properties = typeT.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(x => x.CanRead 
+                            && x.CanWrite 
+                            && x.Name != nameof(IPrimaryKeyContainer.Id) 
+                            && !(x.SetMethod.IsVirtual)).ToArray();
+
+            if (properties.Length == 0)
+                return x => false;
+
+            var propertyDB = Expression.Property(param, properties[0]);
+            var propertyConst = Expression.Property(constant, properties[0]);
+            var predicate = Expression.Equal(propertyDB, propertyConst);
+            foreach (var propertyInfo in properties.Skip(1))
+            {
+                propertyDB = Expression.Property(param, propertyInfo);
+                propertyConst = Expression.Property(constant, propertyInfo);
+                var additional = Expression.Equal(propertyDB, propertyConst);
+                predicate = Expression.AndAlso(predicate, additional);
+            }
+            var lambda = Expression.Lambda<Func<T, bool>>(predicate, param);
+
+            return lambda;
         }
     }
 }

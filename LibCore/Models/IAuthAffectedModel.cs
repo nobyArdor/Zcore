@@ -1,6 +1,6 @@
 ﻿namespace LibCore
 {
-    public interface IAuthAffected
+    public interface IAuthAffectedModel
     {
         long UserId { get; set; }
     }

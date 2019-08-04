@@ -10,7 +10,7 @@ namespace Zcore.Service
         Task<IEnumerable<object>> GetAll(IUserSession userSession);
         Task<object> GetOne(IUserSession userSession, long id);
         Task<object> Put(IUserSession userSession, long id, object value);
-        Task<IPostResponse> Post(IUserSession userSession, object value);
+        Task<IPostResponseModel> Post(IUserSession userSession, object value);
         Task Delete(IUserSession userSession, long id);
     }
 
@@ -19,6 +19,6 @@ namespace Zcore.Service
        new Task<IEnumerable<T>> GetAll(IUserSession userSession);
        new Task<T> GetOne(IUserSession userSession, long id);
        Task<T> Put(IUserSession userSession, long id, T value);
-       Task<IPostResponse> Post(IUserSession userSession, T value);
+       Task<IPostResponseModel> Post(IUserSession userSession, T value);
     }
 }

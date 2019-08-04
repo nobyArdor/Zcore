@@ -1,14 +1,12 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using Zcore.Service;
 using Zcore.Tools;
 
 namespace Zcore.Controllers
 {
-    [Route("zabota/api/[controller]")]
-    public class CommonController<T> : AuthenticatedController where T: class, new()
+     public class CommonController<T> : AuthenticatedController where T: class, new()
     {
         private readonly ILogicService<T> _logicService;
 

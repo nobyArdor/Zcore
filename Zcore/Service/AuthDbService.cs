@@ -20,7 +20,7 @@ namespace Zcore.Service
 
         }
 
-        protected static readonly IPostResponse EmptyPostResponse = new PostBaseModel();
+        protected static readonly IPostResponseModel EmptyPostResponseModel = new PostBaseModel();
 
         protected abstract Expression<Func<T, bool>> ByAuth(object value);
 
@@ -50,7 +50,7 @@ namespace Zcore.Service
             if (finded == null)
                 return null;
 
-            if (value is IAuthAffected affected)
+            if (value is IAuthAffectedModel affected)
                 affected.UserId = userSession.UserId;
 
             Updater(value, finded);
@@ -58,14 +58,21 @@ namespace Zcore.Service
             return finded;
         }
 
-        public virtual async Task<IPostResponse> Post(IUserSession userSession, T value)
+        protected async Task<T> AllReadyExist(T value)
         {
-            if (value is IAuthAffected affected)
+            var expression = LambdaExpressionT.CreateSameObjectChecker(value);
+            var exist = await Container.FirstOrDefaultAsync(expression);
+            return exist;
+        }
+
+        public virtual async Task<IPostResponseModel> Post(IUserSession userSession, T value)
+        {
+            if (value is IAuthAffectedModel affected)
                 affected.UserId = userSession.UserId;
 
-            var res = await Container.AddAsync(value);
+            var res = await AllReadyExist (value) ?? (await Container.AddAsync(value)).Entity;
             await DbContext.SaveChangesAsync();
-            return new PostBaseModel() {Id = res.Entity.Id };
+            return new PostBaseModel() {Id = res.Id };
         }
 
         public async Task Delete(IUserSession userSession, long id)
@@ -86,13 +93,13 @@ namespace Zcore.Service
             return await GetOne(userSession, id);
         }
 
-        async Task<IPostResponse> ILogicService.Post(IUserSession userSession, object value)
+        async Task<IPostResponseModel> ILogicService.Post(IUserSession userSession, object value)
         {
             var tData = ConvertValue<T>(value);
             if (tData != null)
                 return await Post(userSession, tData);
 
-            return EmptyPostResponse;
+            return EmptyPostResponseModel;
         }
 
         async Task<object> ILogicService.Put(IUserSession userSession, long id, object value)

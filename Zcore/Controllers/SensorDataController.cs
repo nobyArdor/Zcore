@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using DbCore.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using DbCore.Models;
+using LibCore;
 using Zcore.Service;
 using Zcore.Tools;
 
 namespace Zcore.Controllers
 {
-    public class SensorDataController : CommonController<SensorData>
+    public class SensorDataController : BatchController<SensorData>
     {
-        public SensorDataController(IUserManager manager, ILogicService<SensorData> logicService) : base(manager, logicService)
+        public SensorDataController(IUserManager manager, ILogicService<SensorData> logicService, ILogicBatchService<SensorData> batchService) : base(manager, logicService, batchService)
         {
         }
     }

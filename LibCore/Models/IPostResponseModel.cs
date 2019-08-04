@@ -1,6 +1,6 @@
 ﻿namespace LibCore
 {
-    public interface IPostResponse
+    public interface IPostResponseModel
     {
         long Id { get; }
     }
