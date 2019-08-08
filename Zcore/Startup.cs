@@ -4,10 +4,8 @@ using LibCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Zcore.Controllers;
 using Zcore.Service;
 using Zcore.Tools;
 
@@ -26,6 +24,7 @@ namespace Zcore
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                
                 .AddConnections()
                 .AddLogging()
                 .AddScoped<IUserManager, CustomAuthManager>()
@@ -34,7 +33,16 @@ namespace Zcore
                 .AddScoped<ILogicBatchService<SensorData>, SensorDataLogicService>()
                 .AddDbContext<BDContext>()
 
-                .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .AddMvc(
+                    options =>
+                    {
+                       // options.ModelBinderProviders.Insert(0, new DateTimeModelBinderProvider());
+                    }
+                    ).AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.DateFormatString = "dd.MM.yyyy hh:mm:ss";
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
