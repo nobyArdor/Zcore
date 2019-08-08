@@ -28,10 +28,8 @@ namespace Zcore.Tools
             var source = Expression.Parameter(typeof(T), "source");
             var dest = Expression.Parameter(typeof(T), "destination");
 
-            //TODO придумать более элегантный подход обхода EntityProxyGetter
-
             var properties = typeT.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                    .Where(x => x.CanRead && x.CanWrite && !(x.SetMethod.IsVirtual));
+                    .Where(x => x.CanRead && x.CanWrite && !typeof(IPrimaryKeyContainer).IsAssignableFrom(x.PropertyType));
                 ;
             IEnumerable<Expression> expressions = properties.Select(x =>
             {
@@ -56,9 +54,10 @@ namespace Zcore.Tools
 
             var properties = typeT.GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .Where(x => x.CanRead 
-                            && x.CanWrite 
+                            && x.CanRead 
                             && x.Name != nameof(IPrimaryKeyContainer.Id) 
-                            && !(x.SetMethod.IsVirtual)).ToArray();
+                            && !typeof(IPrimaryKeyContainer).IsAssignableFrom(x.PropertyType)
+                            ).ToArray();
 
             if (properties.Length == 0)
                 return x => false;
